@@ -1,0 +1,11 @@
+helmet (unifica helmet, hard_hat)
+
+vest
+
+gloves
+
+boots (unifica boots, shoes)
+
+goggles (engloba eyewear, glasses, goggles)
+
+person
