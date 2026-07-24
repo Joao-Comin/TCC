@@ -1,4 +1,4 @@
-train: datasets/augmented/images
-val: datasets/augmented/images
+train: /home/unesc/Área de trabalho/TCC/datasets/final/images
+val: /home/unesc/Área de trabalho/TCC/datasets/final/images
 nc: 6
 names: ['helmet', 'vest', 'gloves', 'boots', 'goggles', 'person']
