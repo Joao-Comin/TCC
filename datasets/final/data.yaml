@@ -1,0 +1,4 @@
+train: images
+val: images
+nc: 6
+names: ['helmet', 'vest', 'gloves', 'boots', 'goggles', 'person']
