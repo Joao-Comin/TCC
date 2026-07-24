@@ -1,4 +1,4 @@
-train: images
-val: images
+train: datasets/augmented/images
+val: datasets/augmented/images
 nc: 6
 names: ['helmet', 'vest', 'gloves', 'boots', 'goggles', 'person']
