@@ -1,2 +1,14 @@
 venv/
 .venv/
+
+# datasets são grandes e reproduzíveis via scripts/ - não versionar
+datasets/
+
+# pesos treinados são grandes/binários - não versionar (ficam só localmente)
+models/**/*.pt
+
+# saídas brutas de treino do Ultralytics - resultados relevantes já vão pra results/vN/
+runs/
+
+*.xlsx#
+.~lock.*

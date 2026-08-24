@@ -1,4 +1,0 @@
-train: /home/unesc/Área de trabalho/TCC/datasets/final/images
-val: /home/unesc/Área de trabalho/TCC/datasets/final/images
-nc: 6
-names: ['helmet', 'vest', 'gloves', 'boots', 'goggles', 'person']

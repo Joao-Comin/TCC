@@ -10,12 +10,15 @@ CLASS_MAP = {
     "boots": "boots",
     "shoes": "boots",
     "gloves": "gloves",
+    "Gloves": "gloves",
     "goggles": "goggles",
+    "Goggles": "goggles",
     "eyewear": "goggles",
     "glasses": "goggles",
     "vest": "vest",
     "person": "person",
-    # classes descartadas não entram no mapa
+    "Person": "person",
+    # classes descartadas não entram no mapa (ex: "No-Gloves")
 }
 
 FINAL_CLASSES = ["helmet", "vest", "gloves", "boots", "goggles", "person"]
@@ -41,6 +44,8 @@ DATASETS = {
     "testcasque": find_dataset_dir(BASE_DIR, "PPE detection*"),
     "mschaberle": find_dataset_dir(BASE_DIR, "EPI.v1-hardhat*"),
     "ensetest": find_dataset_dir(BASE_DIR, "EPI.v2-final_version*"),
+    "glovesds": find_dataset_dir(BASE_DIR, "Gloves.v1i*"),
+    "gogglesds": find_dataset_dir(BASE_DIR, "Goggles.v3i*"),
 }
 
 OUTPUT_IMAGES = "datasets/final/images"
