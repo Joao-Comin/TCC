@@ -5,7 +5,7 @@ import shutil
 SEED = 0
 SPLIT = {"train": 0.8, "val": 0.1, "test": 0.1}
 
-CLASSES = ["helmet", "vest", "gloves", "boots", "goggles", "person"]
+CLASSES = ["helmet", "vest", "gloves", "boots", "goggles"]
 
 SRC_IMAGES = "datasets/final/images"
 SRC_LABELS = "datasets/final/labels"

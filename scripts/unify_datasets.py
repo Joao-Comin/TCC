@@ -16,12 +16,12 @@ CLASS_MAP = {
     "eyewear": "goggles",
     "glasses": "goggles",
     "vest": "vest",
-    "person": "person",
-    "Person": "person",
-    # classes descartadas não entram no mapa (ex: "No-Gloves")
+    # "person" não entra: já é bem coberto pelo YOLO pré-treinado em COCO,
+    # não vale a pena diluir o dataset customizado com poucas instâncias próprias
+    # classes descartadas não entram no mapa (ex: "No-Gloves", "person"/"Person")
 }
 
-FINAL_CLASSES = ["helmet", "vest", "gloves", "boots", "goggles", "person"]
+FINAL_CLASSES = ["helmet", "vest", "gloves", "boots", "goggles"]
 
 BASE_DIR = "datasets/originals"
 
