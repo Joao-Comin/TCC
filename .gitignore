@@ -1,5 +1,9 @@
 venv/
 .venv/
+venv_win/
+
+# videos baixados do youtube pela webapp de demonstracao - nao versionar
+downloads/
 
 # datasets são grandes e reproduzíveis via scripts/ - não versionar
 datasets/
