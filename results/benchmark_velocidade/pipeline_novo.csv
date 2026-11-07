@@ -1,0 +1,7 @@
+config,video,fps_video,ms_leitura,ms_por_frame_mediana,ms_min_rodadas,ms_max_rodadas,fps_analise,pct_frames_analisaveis
+"OpenVINO GPU, paralelo (app)",Chefe Secreto - Stemac Parte 2 - Alan Me,29.97,1.2,39.0,37.9,39.1,25.7,86
+"OpenVINO GPU, paralelo (app)",YTDown.com_YouTube_Media_EirrzjjAf8Y_DE-,23.98,6.2,42.1,40.9,43.1,23.7,99
+"OpenVINO GPU, sequencial",Chefe Secreto - Stemac Parte 2 - Alan Me,29.97,1.2,44.1,43.9,44.6,22.7,76
+"OpenVINO GPU, sequencial",YTDown.com_YouTube_Media_EirrzjjAf8Y_DE-,23.98,5.2,48.0,47.9,48.6,20.8,87
+"PyTorch CPU, sequencial",Chefe Secreto - Stemac Parte 2 - Alan Me,29.97,1.3,110.8,110.4,110.9,9.0,30
+"PyTorch CPU, sequencial",YTDown.com_YouTube_Media_EirrzjjAf8Y_DE-,23.98,6.6,115.9,115.7,116.0,8.6,36

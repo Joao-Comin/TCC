@@ -1,0 +1,7 @@
+estrategia,base,modelo,classe,dif_media,dif_ic95_inf,dif_ic95_sup,frac_amostras_melhor
+frame_960,v5_pytorch_cpu,v5_openvino_gpu,geral,-0.001,-0.004,0.001,0.301
+frame_960,v5_pytorch_cpu,v5_openvino_gpu,helmet,-0.001,-0.006,0.001,0.169
+frame_960,v5_pytorch_cpu,v5_openvino_gpu,vest,0.000,0.000,0.000,0.367
+frame_960,v5_pytorch_cpu,v5_openvino_gpu,gloves,0.001,-0.001,0.003,0.814
+frame_960,v5_pytorch_cpu,v5_openvino_gpu,boots,-0.000,-0.001,0.000,0.115
+frame_960,v5_pytorch_cpu,v5_openvino_gpu,goggles,-0.003,-0.019,0.001,0.147

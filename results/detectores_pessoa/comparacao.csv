@@ -1,0 +1,6 @@
+modelo,pessoas_detectadas,epis_dentro_de_pessoa,epis_anotados,pct,ms_cpu_mediana
+yolo11n.pt,56,97,102,95.1,53
+yolo11n-pose.pt,50,94,102,92.2,40
+yolo26n.pt,54,94,102,92.2,39
+yolo26n-pose.pt,49,94,102,92.2,42
+yolo11s-pose.pt,50,95,102,93.1,82

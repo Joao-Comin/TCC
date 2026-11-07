@@ -1,0 +1,13 @@
+modelo,estrategia,classe,mAP50,ic95_inf,ic95_sup
+v6_pytorch_cpu,frame_960,geral,0.392,0.326,0.518
+v6_pytorch_cpu,frame_960,helmet,0.807,0.695,0.914
+v6_pytorch_cpu,frame_960,vest,0.318,0.105,0.661
+v6_pytorch_cpu,frame_960,gloves,0.153,0.009,0.341
+v6_pytorch_cpu,frame_960,boots,0.050,0.000,0.253
+v6_pytorch_cpu,frame_960,goggles,0.635,0.406,0.848
+v6_openvino_gpu,frame_960,geral,0.392,0.326,0.519
+v6_openvino_gpu,frame_960,helmet,0.805,0.695,0.913
+v6_openvino_gpu,frame_960,vest,0.318,0.105,0.661
+v6_openvino_gpu,frame_960,gloves,0.153,0.009,0.341
+v6_openvino_gpu,frame_960,boots,0.050,0.000,0.253
+v6_openvino_gpu,frame_960,goggles,0.636,0.408,0.849

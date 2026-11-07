@@ -1,0 +1,13 @@
+modelo,estrategia,classe,instancias,P,R,F1,mAP50,mAP50-95
+v6_pytorch_cpu,frame_960,geral,102,0.535,0.399,0.441,0.392,0.236
+v6_pytorch_cpu,frame_960,helmet,34,0.879,0.765,0.818,0.807,0.607
+v6_pytorch_cpu,frame_960,vest,18,0.641,0.299,0.408,0.318,0.154
+v6_pytorch_cpu,frame_960,gloves,17,0.303,0.235,0.265,0.153,0.049
+v6_pytorch_cpu,frame_960,boots,19,0.241,0.053,0.086,0.050,0.018
+v6_pytorch_cpu,frame_960,goggles,14,0.610,0.643,0.626,0.635,0.349
+v6_openvino_gpu,frame_960,geral,102,0.532,0.399,0.440,0.392,0.235
+v6_openvino_gpu,frame_960,helmet,34,0.876,0.765,0.816,0.805,0.604
+v6_openvino_gpu,frame_960,vest,18,0.640,0.297,0.406,0.318,0.154
+v6_openvino_gpu,frame_960,gloves,17,0.303,0.235,0.265,0.153,0.052
+v6_openvino_gpu,frame_960,boots,19,0.229,0.053,0.086,0.050,0.018
+v6_openvino_gpu,frame_960,goggles,14,0.614,0.643,0.628,0.636,0.348

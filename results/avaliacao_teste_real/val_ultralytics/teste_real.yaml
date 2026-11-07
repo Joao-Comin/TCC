@@ -1,0 +1,4 @@
+path: C:/Users/João Victor Comin/Desktop/tcc projeto/TCC/novos_frames_dataset/real_world_test
+train: images
+val: images
+names: ['helmet', 'vest', 'gloves', 'boots', 'goggles']

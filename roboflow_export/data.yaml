@@ -1,0 +1,13 @@
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+nc: 5
+names: ['boots', 'gloves', 'goggles', 'helmet', 'vest']
+
+roboflow:
+  workspace: tcc-nglng
+  project: epi-frames-reai
+  version: 1
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/tcc-nglng/epi-frames-reai/dataset/1

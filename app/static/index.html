@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Monitor de EPI</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M4 21c0-7 5-13 12-13s12 6 12 13z' fill='%23f5b301'/%3E%3Crect x='2' y='20' width='28' height='5' rx='2.5' fill='%23f5b301'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="/static/estilo.css">
+</head>
+<body>
+  <header class="topo">
+    <div class="marca">
+      <svg class="logo" viewBox="0 0 32 32" aria-hidden="true">
+        <path d="M4 21c0-7 5-13 12-13s12 6 12 13z"/><rect x="2" y="20" width="28" height="5" rx="2.5"/>
+        <rect x="14" y="5" width="4" height="9" rx="2" class="logo-faixa"/>
+      </svg>
+      <div>
+        <h1>Monitor de EPI</h1>
+        <p>Detecção de equipamentos de proteção individual em vídeo · YOLO + rastreamento de pessoas</p>
+      </div>
+    </div>
+    <div class="indicadores">
+      <span class="chip" id="chip-disp" title="Onde a rede neural está rodando">—</span>
+      <span class="chip chip-num" id="chip-fps" title="Frames analisados por segundo">— FPS</span>
+      <button id="tema" class="botao-icone" title="Alternar tema claro/escuro" aria-label="Alternar tema">
+        <svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 9 9A7 7 0 0 1 12 3z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="grade">
+    <section class="coluna-principal">
+      <div class="barra-fonte">
+        <div class="abas" role="tablist">
+          <button class="aba ativa" data-fonte="video" role="tab">Vídeo</button>
+          <button class="aba" data-fonte="camera" role="tab">Câmera ao vivo</button>
+        </div>
+        <select id="sel-video" aria-label="Vídeo"></select>
+        <label class="botao-sec" title="Adicionar um vídeo .mp4 ou .webm à pasta video/">
+          <svg viewBox="0 0 24 24"><path d="M12 16V4m0 0-4 4m4-4 4 4M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg>
+          Enviar vídeo
+          <input type="file" id="upload" accept="video/mp4,video/webm,video/quicktime" hidden>
+        </label>
+      </div>
+
+      <div class="tela" id="tela">
+        <video id="video" playsinline muted preload="auto"></video>
+        <canvas id="camada"></canvas>
+        <div class="aviso" id="aviso"><span class="giro"></span><span id="aviso-txt">Carregando…</span></div>
+      </div>
+
+      <div class="controles" id="controles">
+        <button id="play" class="botao-play" aria-label="Reproduzir">
+          <svg viewBox="0 0 24 24" class="ic-play"><path d="M7 4.5v15l13-7.5z"/></svg>
+          <svg viewBox="0 0 24 24" class="ic-pausa"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>
+        </button>
+        <span id="tempo" class="tempo">00:00 / 00:00</span>
+        <input type="range" id="barra" min="0" max="1000" value="0" step="1" aria-label="Posição do vídeo">
+        <select id="velocidade" aria-label="Velocidade" title="Velocidade de reprodução">
+          <option value="0.5">0,5×</option><option value="1" selected>1×</option><option value="1.5">1,5×</option><option value="2">2×</option>
+        </select>
+        <button id="tela-cheia" class="botao-icone" title="Tela cheia" aria-label="Tela cheia">
+          <svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>
+        </button>
+      </div>
+
+      <div class="cartao">
+        <div class="cartao-topo">
+          <h2>Pessoas na cena</h2>
+          <span class="legenda">
+            <i class="bola ok"></i>conforme <i class="bola falta"></i>falta EPI <i class="bola parcial"></i>verificando
+          </span>
+        </div>
+        <div id="pessoas" class="pessoas"><p class="vazio">Nenhuma pessoa detectada ainda.</p></div>
+      </div>
+
+      <div class="cartao">
+        <div class="cartao-topo">
+          <h2>Resumo da sessão</h2>
+          <button id="zerar-resumo" class="botao-link">zerar</button>
+        </div>
+        <div class="kpis">
+          <div class="kpi"><span class="kpi-rotulo">Pessoas identificadas</span><span class="kpi-valor" id="k-pessoas">0</span></div>
+          <div class="kpi"><span class="kpi-rotulo">Ocorrências</span><span class="kpi-valor" id="k-ocorrencias">0</span></div>
+          <div class="kpi"><span class="kpi-rotulo">Tempo em conformidade</span><span class="kpi-valor" id="k-conforme">—</span></div>
+          <div class="kpi"><span class="kpi-rotulo">Tempo analisado</span><span class="kpi-valor" id="k-tempo">0 s</span></div>
+        </div>
+        <div class="medidores" id="medidores"></div>
+        <p class="nota">Uso de cada EPI = fração do tempo em que ele foi detectado na pessoa, contando só os momentos em que a parte do corpo estava visível. Conformidade = todos os EPIs marcados no boneco detectados ao mesmo tempo.</p>
+      </div>
+    </section>
+
+    <aside class="coluna-lateral">
+      <div class="cartao">
+        <div class="cartao-topo">
+          <h2>EPIs monitorados</h2>
+          <span id="boneco-quem" class="legenda"></span>
+        </div>
+        <p class="dica" id="boneco-dica">Clique no boneco para escolher quais EPIs cobrar.</p>
+        <div class="boneco-area">
+          <svg id="boneco" viewBox="0 0 220 440" role="group" aria-label="Boneco: clique numa parte para ligar ou desligar o EPI">
+            <!-- corpo (nao clicavel) -->
+            <g class="corpo">
+              <circle cx="110" cy="74" r="27"/>
+              <rect x="100" y="98" width="20" height="16" rx="4"/>
+              <path d="M68 116 Q110 102 152 116 L158 214 Q110 226 62 214 Z"/>
+              <line x1="69" y1="122" x2="48" y2="206" class="membro"/>
+              <line x1="151" y1="122" x2="172" y2="206" class="membro"/>
+              <rect x="64" y="204" width="92" height="34" rx="12"/>
+              <line x1="89" y1="226" x2="86" y2="362" class="perna"/>
+              <line x1="131" y1="226" x2="134" y2="362" class="perna"/>
+            </g>
+            <!-- EPIs (clicaveis); data-classe segue a ordem de CLASSES -->
+            <g class="parte" data-classe="0" tabindex="0" role="button" aria-label="Capacete">
+              <path d="M80 70 C80 40 96 30 110 30 C124 30 140 40 140 70 Z"/>
+              <rect x="72" y="64" width="76" height="10" rx="5"/>
+              <rect x="106" y="34" width="8" height="30" rx="4" class="detalhe"/>
+            </g>
+            <g class="parte" data-classe="4" tabindex="0" role="button" aria-label="Óculos">
+              <rect x="84" y="78" width="52" height="14" rx="7"/>
+              <rect x="89" y="81" width="18" height="8" rx="4" class="lente"/>
+              <rect x="113" y="81" width="18" height="8" rx="4" class="lente"/>
+            </g>
+            <g class="parte" data-classe="1" tabindex="0" role="button" aria-label="Colete">
+              <path d="M70 118 Q86 110 98 110 L110 146 L122 110 Q134 110 150 118 L156 210 Q110 220 64 210 Z"/>
+              <rect x="66" y="160" width="88" height="8" class="faixa"/>
+              <rect x="65" y="184" width="90" height="8" class="faixa"/>
+            </g>
+            <g class="parte" data-classe="2" tabindex="0" role="button" aria-label="Luvas">
+              <rect x="34" y="198" width="28" height="34" rx="11"/>
+              <rect x="158" y="198" width="28" height="34" rx="11"/>
+            </g>
+            <g class="parte" data-classe="3" tabindex="0" role="button" aria-label="Botas">
+              <path d="M70 352 h32 v34 a6 6 0 0 1 -6 6 h-42 a10 10 0 0 1 -10 -10 v-2 a10 10 0 0 1 10 -10 h16 Z"/>
+              <path d="M150 352 h-32 v34 a6 6 0 0 0 6 6 h42 a10 10 0 0 0 10 -10 v-2 a10 10 0 0 0 -10 -10 h-16 Z"/>
+            </g>
+            <!-- selos de estado da pessoa selecionada -->
+            <g id="selos"></g>
+          </svg>
+        </div>
+        <div class="chips-epi" id="chips-epi"></div>
+      </div>
+
+      <div class="cartao">
+        <h2>Detecção</h2>
+        <label class="campo">Modelo
+          <select id="sel-modelo"></select>
+        </label>
+        <label class="campo">Confiança mínima <output id="conf-val">0,40</output>
+          <input type="range" id="conf" min="0.15" max="0.9" step="0.05" value="0.4">
+        </label>
+        <label class="campo" title="Um EPI conta como presente se foi detectado em algum frame analisado dentro desta janela">
+          Memória do EPI <output id="janela-val">2,0 s</output>
+          <input type="range" id="janela" min="0.5" max="5" step="0.5" value="2">
+        </label>
+        <label class="troca"><input type="checkbox" id="recortes"><span></span>Refino por recorte da pessoa</label>
+        <label class="troca"><input type="checkbox" id="ver-pontos" checked><span></span>Mostrar pontos do corpo</label>
+        <label class="troca"><input type="checkbox" id="ver-todos"><span></span>Mostrar EPIs não monitorados</label>
+      </div>
+
+      <div class="cartao">
+        <div class="cartao-topo">
+          <h2>Ocorrências</h2>
+          <span><button id="exportar" class="botao-link" title="Baixar as ocorrências em CSV">exportar CSV</button>
+          <button id="limpar" class="botao-link">limpar</button></span>
+        </div>
+        <ol id="ocorrencias" class="ocorrencias"><li class="vazio">Nenhuma ocorrência.</li></ol>
+      </div>
+
+      <div class="cartao desempenho">
+        <h2>Desempenho</h2>
+        <dl>
+          <dt>Frames analisados/s</dt><dd id="d-fps">—</dd>
+          <dt>Analisados</dt><dd id="d-passo">—</dd>
+          <dt>Pessoas + pontos</dt><dd id="d-pessoas">—</dd>
+          <dt>EPIs</dt><dd id="d-epis">—</dd>
+          <dt>Refino</dt><dd id="d-refino">—</dd>
+          <dt>Total por frame</dt><dd id="d-total">—</dd>
+        </dl>
+      </div>
+    </aside>
+  </main>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
