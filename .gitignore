@@ -15,6 +15,8 @@ datasets/
 
 # pesos treinados são grandes/binários - não versionar (ficam só localmente)
 models/**/*.pt
+# exceção: o modelo v5 usado pelo app (16 MB), para o projeto rodar logo após o clone
+!models/best.pt
 
 # saídas brutas de treino do Ultralytics - resultados relevantes já vão pra results/vN/
 runs/
