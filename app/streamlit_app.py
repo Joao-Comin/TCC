@@ -1,29 +1,40 @@
 """
-Pagina basica: cola um link do YouTube, o app baixa o video e roda o modelo
-YOLO treinado (best.pt) para identificar os EPIs, mostrando cada frame
-analisado na hora (ao vivo), em vez de processar tudo e so mostrar no final.
+Pagina basica: roda o modelo YOLO treinado (best.pt) sobre um video local
+(pasta video/), em loop continuo, mostrando cada frame analisado na hora
+(ao vivo) com os EPIs marcados e a confianca de cada deteccao. Na barra
+lateral da para trocar a versao do modelo, o video e a confianca minima.
 
 Uso:
     venv_win\\Scripts\\streamlit run app/streamlit_app.py
+
+Para parar: feche a aba do navegador ou aperte Ctrl+C no terminal (o loop e
+continuo e nao para sozinho).
 """
 
+import glob
 import os
+import time
 
 import cv2
 import streamlit as st
-import yt_dlp
 from ultralytics import YOLO
 
 MODEL_PATH = "models/best.pt"
-DOWNLOADS_DIR = "downloads"
+VIDEO_DIR = "video"
+
+# nomes amigaveis para o seletor; arquivos fora da lista aparecem pelo nome
+MODEL_LABELS = {
+    "models/best.pt": "v5 (atual)",
+    "models/best_v6.pt": "v6 (960, mais precisa)",
+    "models/best_24-09.pt": "v4",
+    "models/best_antigo.pt": "v2",
+}
+
+CONF = 0.40
+IMGSZ = 960
 
 st.set_page_config(page_title="Detector de EPI", layout="centered")
-st.title("Detector de EPI em video do YouTube")
-st.caption(
-    "Cola o link de um video do YouTube (ex: chao de fabrica) e o modelo "
-    "treinado identifica capacete, colete, luvas, botas e oculos de protecao "
-    "conforme cada frame e analisado."
-)
+st.title("Detector de EPI - video em loop")
 
 
 @st.cache_resource
@@ -31,85 +42,65 @@ def load_model(path):
     return YOLO(path)
 
 
-def download_youtube_video(url: str) -> str:
-    os.makedirs(DOWNLOADS_DIR, exist_ok=True)
-    out_template = os.path.join(DOWNLOADS_DIR, "%(id)s.%(ext)s")
-
-    ydl_opts = {
-        # so precisamos da faixa de video (deteccao nao usa audio) - assim nao
-        # depende de existir um formato ja pronto com audio+video juntos, nem
-        # de ffmpeg pra mesclar faixas separadas
-        "format": "bestvideo[ext=mp4][height<=480]/bestvideo[height<=480]/bestvideo/best",
-        "outtmpl": out_template,
-        "noplaylist": True,
-        "quiet": True,
-        "no_warnings": True,
-        # YouTube exige resolver um desafio via JS para liberar todos os
-        # formatos; sem isso a extracao trava/falha. Usa o Node.js do sistema.
-        "js_runtimes": {"node": {}},
-    }
-
-    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        info = ydl.extract_info(url, download=True)
-        return ydl.prepare_filename(info)
+def list_local_videos():
+    exts = ("*.mp4", "*.avi", "*.mov", "*.mkv")
+    candidates = []
+    for ext in exts:
+        candidates.extend(glob.glob(os.path.join(VIDEO_DIR, ext)))
+    # o adicionado mais recentemente primeiro (vira o padrao do seletor)
+    return sorted(candidates, key=os.path.getmtime, reverse=True)
 
 
-def run_live_detection(model, video_path: str, conf: float, vid_stride: int, frame_slot, status_slot):
-    cap = cv2.VideoCapture(video_path)
-    total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+def run_live_loop(model, video_path: str, frame_slot, conf: float):
+    while True:
+        cap = cv2.VideoCapture(video_path)
+        fps = cap.get(cv2.CAP_PROP_FPS) or 30.0
+        total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        start_time = time.time()
+        try:
+            while True:
+                # sempre pega o frame que deveria estar passando AGORA no
+                # tempo real do video, pulando os que ficaram pra tras se o
+                # processamento estiver mais lento que o video - mantem a
+                # velocidade de reproducao real em vez de acumular atraso
+                target_frame = int((time.time() - start_time) * fps)
+                if target_frame >= total_frames:
+                    break
 
-    frame_idx = 0
-    processed = 0
-    try:
-        while True:
-            ret, frame = cap.read()
-            if not ret:
-                break
+                cap.set(cv2.CAP_PROP_POS_FRAMES, target_frame)
+                ret, frame = cap.read()
+                if not ret:
+                    break
 
-            if frame_idx % vid_stride == 0:
-                results = model.predict(frame, conf=conf, verbose=False)
+                results = model.predict(frame, conf=conf, imgsz=IMGSZ, verbose=False)
                 annotated_bgr = results[0].plot()
                 frame_slot.image(cv2.cvtColor(annotated_bgr, cv2.COLOR_BGR2RGB), channels="RGB")
-                processed += 1
-                status_slot.text(f"Analisando frame {frame_idx + 1}/{total_frames}...")
-
-            frame_idx += 1
-    finally:
-        cap.release()
-
-    status_slot.text(f"Concluido - {processed} frames analisados de {total_frames} totais.")
+        finally:
+            cap.release()
 
 
 if not os.path.exists(MODEL_PATH):
-    st.error(
-        f"Modelo nao encontrado em '{MODEL_PATH}'. Baixe o `best.pt` do seu "
-        "Google Drive (MyDrive/TCC/runs/train-colab-v2/weights/best.pt) e "
-        "coloque nesse caminho antes de usar a pagina."
-    )
+    st.error(f"Modelo nao encontrado em '{MODEL_PATH}'.")
     st.stop()
 
-youtube_url = st.text_input("Link do YouTube", placeholder="https://www.youtube.com/watch?v=...")
+videos = list_local_videos()
+if not videos:
+    st.error(f"Nenhum video encontrado na pasta '{VIDEO_DIR}/'.")
+    st.stop()
+video_path = st.sidebar.selectbox("Video", videos, format_func=os.path.basename)
 
-col1, col2 = st.columns(2)
-with col1:
-    conf = st.slider("Confianca minima", 0.1, 0.9, 0.4, 0.05)
-with col2:
-    vid_stride = st.slider(
-        "Pular frames (maior = mais rapido, menos suave)", 1, 10, 2
-    )
+# seletor para comparar versoes do modelo no mesmo video
+# ordem do MODEL_LABELS (o atual primeiro, vira o padrao); desconhecidos no fim
+ordem = list(MODEL_LABELS)
+modelos = sorted((p.replace("\\", "/") for p in glob.glob("models/*.pt")),
+                 key=lambda p: (ordem.index(p) if p in ordem else len(ordem), p))
+modelo_path = st.sidebar.selectbox(
+    "Modelo", modelos, format_func=lambda p: MODEL_LABELS.get(p, os.path.basename(p))
+)
+conf = st.sidebar.slider("Confianca minima", 0.05, 0.90, CONF, 0.05)
+st.caption(f"Video: {os.path.basename(video_path)}")
 
-if st.button("Processar video", type="primary", disabled=not youtube_url):
-    try:
-        with st.spinner("Baixando video do YouTube..."):
-            video_path = download_youtube_video(youtube_url)
-
-        st.success(f"Video baixado: {os.path.basename(video_path)}")
-
-        model = load_model(MODEL_PATH)
-
-        frame_slot = st.empty()
-        status_slot = st.empty()
-        run_live_detection(model, video_path, conf, vid_stride, frame_slot, status_slot)
-
-    except Exception as e:
-        st.error(f"Erro: {e}")
+if st.button("Iniciar deteccao", type="primary"):
+    model = load_model(modelo_path)
+    frame_slot = st.empty()
+    run_live_loop(model, video_path, frame_slot, conf)

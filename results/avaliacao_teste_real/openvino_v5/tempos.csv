@@ -1,0 +1,3 @@
+modelo,estrategia,pessoas_ms,epis_ms,refino_ms,total_ms
+v5_pytorch_cpu,frame_960,0.0,67.3,0.0,67.4
+v5_openvino_gpu,frame_960,0.0,23.6,0.0,23.6

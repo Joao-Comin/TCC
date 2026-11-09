@@ -2,8 +2,13 @@ venv/
 .venv/
 venv_win/
 
-# videos baixados do youtube pela webapp de demonstracao - nao versionar
+# videos baixados/locais usados pela webapp de demonstracao - nao versionar
 downloads/
+video/
+
+# frames coletados e pre-anotacao - saem daqui pra ferramenta de anotacao
+novos_frames/
+pre_anotado/
 
 # datasets são grandes e reproduzíveis via scripts/ - não versionar
 datasets/
@@ -16,3 +21,24 @@ runs/
 
 *.xlsx#
 .~lock.*
+
+# chave da API do Roboflow - nunca versionar
+.env
+
+# modelos exportados para OpenVINO - reproduziveis com scripts/exportar_openvino.py
+models/openvino/
+
+# frames escolhidos para anotar (scripts/selecionar_frames_anotacao.py) - vao para o Roboflow
+novos_frames_v7/
+
+# exportacoes de datasets (centenas de MB) - ficam so localmente / no Drive
+*.zip
+
+# textos do TCC e anotacoes de trabalho - ficam so localmente
+docs/
+
+# testes de diagnostico e log do compilador da GPU Intel (OpenVINO)
+diag_tmp/
+kernel.errors.txt
+
+__pycache__/

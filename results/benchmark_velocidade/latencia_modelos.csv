@@ -1,0 +1,7 @@
+modelo,formato,dispositivo,ms_mediana,ms_p90,fps
+EPI v6 (imgsz 960),PyTorch,CPU,70.2,82.6,14.3
+EPI v6 (imgsz 960),OpenVINO,CPU,73.0,91.4,13.7
+EPI v6 (imgsz 960),OpenVINO,GPU Iris Xe,23.2,26.2,43.2
+Pessoas+pose YOLO26n (imgsz 640),PyTorch,CPU,44.9,53.3,22.3
+Pessoas+pose YOLO26n (imgsz 640),OpenVINO,CPU,40.4,48.9,24.7
+Pessoas+pose YOLO26n (imgsz 640),OpenVINO,GPU Iris Xe,19.2,21.7,52.1

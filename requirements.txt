@@ -1,0 +1,31 @@
+# Ambiente local (venv_win, Python 3.14) - versoes testadas em 2026-10
+# Instalar: venv_win\Scripts\python -m pip install -r requirements.txt
+
+# deteccao, rastreamento e avaliacao
+ultralytics==8.4.138
+torch==2.13.0
+torchvision==0.28.0
+lap==0.5.13              # associacao do rastreador (ByteTrack)
+numpy==2.3.5
+opencv-python==5.0.0.93
+pandas==3.0.5
+PyYAML==6.0.3
+
+# aceleracao na GPU integrada Intel (scripts/exportar_openvino.py)
+openvino==2026.4.1
+
+# app de demonstracao (app/servidor.py)
+fastapi==0.156.4
+uvicorn==0.52.4
+python-multipart==0.0.32  # envio de video pela interface
+websockets==16.1.1        # scripts/testar_sessao_tempo_real.py
+
+# preparo de dados
+albumentations==2.0.8     # augmentations de video (treino v7, no Colab)
+transformers==5.17.0      # Grounding DINO (auditoria/pre-anotacao)
+pillow==12.3.0
+roboflow==1.5.1
+python-dotenv==1.2.3
+
+# app antigo (app/streamlit_app.py, guardado como referencia)
+streamlit==1.63.0
